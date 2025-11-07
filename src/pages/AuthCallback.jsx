@@ -11,9 +11,20 @@ function AuthCallback() {
 
   useEffect(() => {
     const code = searchParams.get('code')
+    const errorParam = searchParams.get('error')
+    const errorDescription = searchParams.get('error_description')
+
+    // Check for OAuth error parameters
+    if (errorParam) {
+      setError(
+        `OAuth Error: ${errorParam}${errorDescription ? ` - ${errorDescription}` : ''}`
+      )
+      setLoading(false)
+      return
+    }
 
     if (!code) {
-      setError('No authorization code received')
+      setError('No authorization code received. The OAuth provider may have rejected the request.')
       setLoading(false)
       return
     }
@@ -23,6 +34,8 @@ function AuthCallback() {
     // For local dev, use Vercel CLI: vercel dev
     const apiUrl = '/api/authCallback'
     
+    console.log('Exchanging authorization code for token...', { code: code.substring(0, 10) + '...' })
+    
     axios
       .get(`${apiUrl}?code=${code}`)
       .then((response) => {
@@ -31,17 +44,23 @@ function AuthCallback() {
         if (access_token) {
           // Store token in localStorage
           localStorage.setItem('zid_token', access_token)
+          console.log('Token stored successfully, redirecting to dashboard...')
           // Redirect to dashboard
           navigate('/dashboard')
         } else {
-          setError('No access token received')
+          setError('No access token received from server')
           setLoading(false)
         }
       })
       .catch((err) => {
         console.error('Error exchanging code for token:', err)
+        const errorMessage = err.response?.data?.error || 
+                            err.response?.data?.message || 
+                            err.message || 
+                            'Failed to authenticate'
+        const errorDetails = err.response?.data?.details || ''
         setError(
-          err.response?.data?.error || err.message || 'Failed to authenticate'
+          `${errorMessage}${errorDetails ? `: ${errorDetails}` : ''}`
         )
         setLoading(false)
       })

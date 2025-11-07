@@ -23,22 +23,46 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Missing authorization code' })
   }
 
-  const clientId = process.env.REACT_APP_ZID_CLIENT_ID || process.env.VITE_ZID_CLIENT_ID
+  // Get credentials from environment variables
+  // Try multiple possible env var names for client ID
+  const clientId = process.env.REACT_APP_ZID_CLIENT_ID || 
+                   process.env.VITE_ZID_CLIENT_ID || 
+                   process.env.ZID_CLIENT_ID || 
+                   '5374' // Fallback for debugging - should be set via env vars in production
   const clientSecret = process.env.ZID_CLIENT_SECRET
+  
   // Redirect URI must match exactly what was used in the authorization request
   // Use environment variable or fallback to production URL
   const redirectUri = process.env.ZID_REDIRECT_URI || 
     (process.env.VERCEL_URL 
       ? `https://${process.env.VERCEL_URL}/auth/callback`
       : 'https://smartfit-ai-theta.vercel.app/auth/callback')
+  
+  console.log('Token exchange request:', {
+    hasCode: !!code,
+    hasClientId: !!clientId,
+    hasClientSecret: !!clientSecret,
+    redirectUri
+  })
 
   if (!clientId || !clientSecret) {
     console.error('Missing environment variables:', {
       hasClientId: !!clientId,
       hasClientSecret: !!clientSecret,
+      envVarsChecked: [
+        'REACT_APP_ZID_CLIENT_ID',
+        'VITE_ZID_CLIENT_ID', 
+        'ZID_CLIENT_ID',
+        'ZID_CLIENT_SECRET'
+      ]
     })
     return res.status(500).json({
       error: 'Server configuration error: Missing Zid credentials',
+      message: 'Please ensure ZID_CLIENT_SECRET is set in Vercel environment variables',
+      details: {
+        hasClientId: !!clientId,
+        hasClientSecret: !!clientSecret
+      }
     })
   }
 
