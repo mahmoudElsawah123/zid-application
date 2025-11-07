@@ -10,6 +10,7 @@ function Home() {
     redirectUri
   )}&response_type=code&scope=openid products orders webhooks addons`;
 
+  console.log(authUrl , 'authUrl');
   return (
     <div className="home-container">
       <div className="home-content">
