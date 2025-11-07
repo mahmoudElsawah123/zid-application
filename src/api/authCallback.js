@@ -19,7 +19,7 @@ export default function AuthCallback() {
     const exchangeCode = async () => {
       try {
         const response = await fetch(
-          "https://smartfit-ai.vercel.app/api/authCallback",
+          "https://smartfit-ai-theta.vercel.app/api/authCallback",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

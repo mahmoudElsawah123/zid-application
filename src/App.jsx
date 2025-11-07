@@ -5,7 +5,7 @@ import "./App.css";
 
 function Home() {
   const clientId = "5374"; // 🔹 Client ID
-  const redirectUri = "https://smartfit-ai.vercel.app/auth/callback"; // 🔹 نفس اللي في لوحة زد
+  const redirectUri = "https://smartfit-ai-theta.vercel.app/auth/callback"; // 🔹 نفس اللي في لوحة زد
   const authUrl = `https://oauth.zid.sa/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
     redirectUri
   )}&response_type=code&scope=openid products orders webhooks addons`;

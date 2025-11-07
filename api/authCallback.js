@@ -30,7 +30,7 @@ export default async function handler(req, res) {
   const redirectUri = process.env.ZID_REDIRECT_URI || 
     (process.env.VERCEL_URL 
       ? `https://${process.env.VERCEL_URL}/auth/callback`
-      : 'https://smartfit-ai.vercel.app/auth/callback')
+      : 'https://smartfit-ai-theta.vercel.app/auth/callback')
 
   if (!clientId || !clientSecret) {
     console.error('Missing environment variables:', {
